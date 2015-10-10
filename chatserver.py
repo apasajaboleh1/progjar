@@ -7,9 +7,8 @@ SOCKET_LIST = []
 RECV_BUFFER = 4096 
 PORT = 9009
 MAPPING = {}
-DECODE ={}
 def chat_server():
-
+    
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server_socket.bind((HOST, PORT))
@@ -26,97 +25,118 @@ def chat_server():
                 sockfd, addr = server_socket.accept()
                 SOCKET_LIST.append(sockfd)
                 print "Client (%s, %s) terhubung" % addr
-                broadcast(server_socket, sockfd, "[%s:%s] memasuki chatting room kami\n" % addr)
-		
+                #broadcast(server_socket, sockfd, "\r[%s:%s] memasuki chatting room kami\n" % addr)
             else:
                 
                 try:
 		        data = sock.recv(RECV_BUFFER)
 		        if data:
-			   
-			   ji = data.split()
 			   global MAPPING
-			   MAPPING[ji[0]]=sockfd
-			   global DECODE
-			   DECODE[sockfd]=ji[0]
-			   #print "%s split " %ji[0]
-			   #print "%s command" %ji[2]
-			   #print "%s " % MAPPING[ji[0]]
+			   ji = data.split()
 			   if ji[2] =="sendto" :
-				sendto(ji[3],ji)
+				test =False
+				for key,value in MAPPING.iteritems():
+					if value == sock :
+						test=True
+				if test==True :
+					sendto(ji[3],ji)
+				else :
+					sock.send("\rbelom login gan\n")
+				
 			   elif ji[2] =="list" :
-				daftar(sock,server_socket)
+				test =False
+				for key,value in MAPPING.iteritems():
+					if value == sock :
+						test=True
+				if test==True :
+					daftar(sock,server_socket)
+				else :
+					sock.send("\rbelom login gan\n")
+				
 			   elif ji[2]=="sendall" :
-				datajadian = "\n" + ji[0] + " says "
+				datajadian = "\r" + ji[0] + " says "
 				count = 0
 				while count !=len(ji):
 					if count >2:
 						datajadian += (ji[count]+" ")
 					count+=1
 				datajadian += "\n"
-				broadcast(server_socket, sock, "\r"+datajadian )
+				test =False
+				for key,value in MAPPING.iteritems():
+					if value == sock :
+						test=True
+				if test==True :
+					broadcast(server_socket, sock, datajadian)
+				else :
+					sock.send("\rbelom login gan\n")
+			   elif (ji[0]==ji[2]):
+				login(sock,ji[0],server_socket)
+			   elif ji[2]=="login" :
+				login(sock,ji[3],server_socket)
 			   else:
-				broadcast1()
-		        else:            
+				sock.send("\rinvalid command\n")
+		        else:          
 		           if sock in SOCKET_LIST:
-		                SOCKET_LIST.remove(sock)     
-		           broadcast(server_socket, sock, "Client (%s, %s) off\n" % addr) 
+		                SOCKET_LIST.remove(sock)
+			   simpan = MAPPING[sock]     
+		           broadcast(server_socket, sock, "\rClient (%s) off\n" % simpan) 
  
                 except:
-                    broadcast(server_socket, sock, "Client (%s, %s) off\n" % addr)
+                    broadcast(server_socket, sock, "\rAda client off\n" )
                     continue
 
     server_socket.close()
 
-def daftar(sock,server_socket):
-	#print "%s" %sock
-	#print "%s" %server_socket
-	#sock.send("\n")
-	#counter = 0	
+def daftar(sock1,server_socket):
+	data ="\rlist yang online\n"	
 	for socket in SOCKET_LIST :
-		
-		if sock != socket and server_socket!=socket:
-			try:
-				sock.send("\n"+DECODE[socket]+" is online\n")
-			except :
-				sock.close()
-				if sock in SOCKET_LIST:
-					SOCKET_LIST.remove(socket)
+		for key,value in MAPPING.iteritems():
+			if socket == value :
+				data+=(key + " is online \n")
+	try:	
+		sock1.send(data)
+	except:
+		socket.close()
+		if socket in SOCKET_LIST :
+			SOCKET_LIST.remove(socket)
+	
 def sendto(destination,message):
-	data = "\n"+message[0] + " says "
+	data = "\r"+message[0] + " says "
 	count = 0 
 	while count!=len(message):
 		if count>3 :
 			data+=(message[count]+" ")
 		count +=1	
 	data += "\n"
-	#print "%s" %data
-	#print "%s \n" %destination
-	#print "%s\n" %MAPPING[destination].bind
-	#print "%s\n" %MAPPING[message[0]].bind
 	socket = MAPPING[destination]
 	try :
 		socket.send(data)
 	except :
 		socket.close()
 		if socket in SOCKET_LIST :
-			SOCKET_LIST.remove(socket)			
+			SOCKET_LIST.remove(socket)
+def login(sock,name,server_socket):
+	test =True
+	for key,value in MAPPING.iteritems():
+		if key == name :
+			test=False
+	if(test==False):
+		sock.send("\rusername sudah dipake\n")
+	else :
+		MAPPING[name]=sock
+		broadcast1(sock,server_socket,name)			
 def broadcast (server_socket, sock, message):
     
     for socket in SOCKET_LIST:
-        #print "%s" %socket
         if socket != server_socket and socket != sock :
             try :
                 socket.send(message)
             except :
-                
                 socket.close()
-                
                 if socket in SOCKET_LIST:
                     SOCKET_LIST.remove(socket)	
-def broadcast1 ():
-   #ujicoba
-   print ""
+def broadcast1 (sock,server_socket,name):
+   	broadcast(server_socket,sock,"\r%s sudah terhubung dengan system \n"%name)
  
 if __name__ == "__main__":
 

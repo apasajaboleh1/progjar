@@ -45,13 +45,17 @@ def chat_client():
 		            sys.exit()
 		        else :
 		            sys.stdout.write(data)
-		            sys.stdout.write(test+" says "); sys.stdout.flush()     
+			    if data =="\rusername sudah dipake\n":
+				sys.exit()
+			    else :
+		            	sys.stdout.write(test+" says "); sys.stdout.flush()     
 		    
 		    else :
+			
 		        msg = sys.stdin.readline()
 			msg = test+" says "+msg
 		        s.send(msg)
-		        sys.stdout.write(test+" says "); sys.stdout.flush() 
+		        sys.stdout.write(test+" says "); sys.stdout.flush()
     else  :
 	sys.exit()
 if __name__ == "__main__":
