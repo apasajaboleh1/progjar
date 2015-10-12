@@ -7,6 +7,7 @@ SOCKET_LIST = []
 RECV_BUFFER = 4096 
 PORT = 9009
 MAPPING = {}
+alamat = {}
 def chat_server():
     
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -32,6 +33,7 @@ def chat_server():
 		        data = sock.recv(RECV_BUFFER)
 		        if data:
 			   global MAPPING
+			   global alamat
 			   ji = data.split()
 			   if ji[2] =="sendto" :
 				test =False
@@ -40,8 +42,6 @@ def chat_server():
 						test=True
 				if test==True :
 					sendto(ji[3],ji)
-				else :
-					sock.send("\rbelom login gan\n")
 				
 			   elif ji[2] =="list" :
 				test =False
@@ -50,8 +50,7 @@ def chat_server():
 						test=True
 				if test==True :
 					daftar(sock,server_socket)
-				else :
-					sock.send("\rbelom login gan\n")
+				
 				
 			   elif ji[2]=="sendall" :
 				datajadian = "\r" + ji[0] + " says "
@@ -67,12 +66,11 @@ def chat_server():
 						test=True
 				if test==True :
 					broadcast(server_socket, sock, datajadian)
-				else :
-					sock.send("\rbelom login gan\n")
+				
 			   elif (ji[0]==ji[2]):
-				login(sock,ji[0],server_socket)
+				login(sock,ji[0],server_socket,addr)
 			   elif ji[2]=="login" :
-				login(sock,ji[3],server_socket)
+				login(sock,ji[3],server_socket,addr)
 			   else:
 				sock.send("\rinvalid command\n")
 		        else:          
@@ -82,7 +80,10 @@ def chat_server():
 		           broadcast(server_socket, sock, "\rClient (%s) off\n" % simpan) 
  
                 except:
-                    broadcast(server_socket, sock, "\rAda client off\n" )
+		    
+		    for key,value in alamat.iteritems() :
+			if value == addr:
+                    		broadcast(server_socket, sock, "\r(%s) off\n"%key )
                     continue
 
     server_socket.close()
@@ -115,7 +116,7 @@ def sendto(destination,message):
 		socket.close()
 		if socket in SOCKET_LIST :
 			SOCKET_LIST.remove(socket)
-def login(sock,name,server_socket):
+def login(sock,name,server_socket,addr):
 	test =True
 	for key,value in MAPPING.iteritems():
 		if key == name :
@@ -124,6 +125,7 @@ def login(sock,name,server_socket):
 		sock.send("\rusername sudah dipake\n")
 	else :
 		MAPPING[name]=sock
+		alamat[name]=addr
 		broadcast1(sock,server_socket,name)			
 def broadcast (server_socket, sock, message):
     
