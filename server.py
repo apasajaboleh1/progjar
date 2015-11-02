@@ -10,15 +10,17 @@ sock.listen(queue_data)
 print 'serve at %s port %s'%server_addr
 while True:
 	client_con,client_addr=sock.accept()
-	test="<!DOCTYPE HTML><html><h1>sukses gan</h1></html>"
-	data="HTTP/1.1 200 OK \n\n%s"%test
+	#test="<!DOCTYPE HTML><html><h1>sukses gan</h1></html>"
+	#data="HTTP/1.1 200 OK \n\n%s"%test
 	request = client_con.recv(1024)
 	request_data=request.split()
 	temp=request_data[1]
 	temp1=temp[1:]
 	if temp=="/" :
-		
-		http_response=data	
+		f=open("index.html","r+")
+		index=f.read()
+		f.close()
+		http_response="HTTP/1.1 200 OK \n\n%s"%index
     		client_con.sendall(http_response)
 	else :
 		try :
