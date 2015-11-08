@@ -16,11 +16,11 @@ while True:
 	request_data=request.split()
 	temp=request_data[1]
 	temp1=temp[1:]
-	if temp=="/" :
+	"""if temp=="/" :
 		f=open("index.html","r+")
 		index=f.read()
 		f.close()
-		http_response="HTTP/1.1 200 OK \n\n%s"%index
+		http_response="HTTP/1.1 200 OK \r\n\r\n%s"%index
     		client_con.sendall(http_response)
 	else :
 		try :
@@ -29,11 +29,22 @@ while True:
 			ambil_data=f.read()
 			f.close()
 			if ambil_data :
-				data_send="HTTP/1.1 200 OK \n\n%s"%ambil_data
+				data_send="HTTP/1.1 200 OK \r\n\r\n%s"%ambil_data
 				client_con.sendall(data_send)
 		except :
     			err="HTTP/1.1 404 Not Found\n\n <h1>NOT FOUND</h1>"
-                	client_con.sendall(err)
+                	client_con.sendall(err)"""
+	try :
+		#print temp1
+		f=open(temp1+".jpeg","r+")
+		ambil_data=f.read()
+		f.close()
+		if ambil_data :
+			data_send="HTTP/1.1 200 OK \r\n\r\n%s"%ambil_data
+			client_con.sendall(data_send)
+	except :
+    		err="HTTP/1.1 404 Not Found\n\n <h1>404<br>NOT FOUND</h1>"
+                client_con.sendall(err)
 	client_con.close()
 		
 
