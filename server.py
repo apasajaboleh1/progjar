@@ -16,32 +16,42 @@ while True:
 	request_data=request.split()
 	temp=request_data[1]
 	temp1=temp[1:]
+	datahandler = temp1.split("?")
+	datarecognation=""
+	if len(datahandler)>1 :
+		datacapturing = datahandler[1]
+		datarecognation = datacapturing.split("&");
 	"""if temp=="/" :
 		f=open("index.html","r+")
 		index=f.read()
 		f.close()
-		http_response="HTTP/1.1 200 OK \r\n\r\n%s"%index
-    		client_con.sendall(http_response)
+		datasimpan = ""
+			for i in range(len(datarecognation)):
+				datasimpan=datasimpan+datarecognation[i]+"\n"
+			data_send="HTTP/1.1 200 OK \r\n\r\n%s"%datasimpan+ambil_data
+			client_con.sendall(data_send)
 	else :
-		try :
-			#print temp1
-			f=open(temp1,"r+")
-			ambil_data=f.read()
-			f.close()
-			if ambil_data :
-				data_send="HTTP/1.1 200 OK \r\n\r\n%s"%ambil_data
-				client_con.sendall(data_send)
+		f=open(datahandler[0],"r+")
+		ambil_data=f.read()
+		f.close()
+		if ambil_data :
+			datasimpan = ""
+			for i in range(len(datarecognation)):
+				datasimpan=datasimpan+datarecognation[i]+"\n"
+			data_send="HTTP/1.1 200 OK \r\n\r\n%s"%datasimpan+ambil_data
+			client_con.sendall(data_send)
 		except :
     			err="HTTP/1.1 404 Not Found\n\n <h1>NOT FOUND</h1>"
                 	client_con.sendall(err)"""
 	try :
-		#print temp1
+		#print len(datarecognation)
 		f=open(temp1+".jpeg","r+")
 		ambil_data=f.read()
 		f.close()
 		if ambil_data :
 			data_send="HTTP/1.1 200 OK \r\n\r\n%s"%ambil_data
 			client_con.sendall(data_send)
+		
 	except :
     		err="HTTP/1.1 404 Not Found\n\n <h1>404<br>NOT FOUND</h1>"
                 client_con.sendall(err)
