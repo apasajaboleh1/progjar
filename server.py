@@ -24,14 +24,18 @@ while True:
 	
 	
 	"""if temp=="/" :
-		f=open("index.html","r+")
-		index=f.read()
-		f.close()
-		datasimpan = ""
-		for i in range(len(datarecognation)):
-			datasimpan=datasimpan+datarecognation[i]+"\n"
-		data_send="HTTP/1.1 200 OK \r\n\r\n%s"%datasimpan+index
-		client_con.sendall(data_send)
+		try :
+			f=open("index.html","r+")
+			index=f.read()
+			f.close()
+			datasimpan = ""
+			for i in range(len(datarecognation)):
+				datasimpan=datasimpan+datarecognation[i]+"\n"
+			data_send="HTTP/1.1 200 OK \r\n\r\n%s"%datasimpan+index
+			client_con.sendall(data_send)
+		except :
+			err="HTTP/1.1 404 Not Found\r\n\r\n <h1>NOT FOUND</h1>"
+			client_con.sendall(err)
 	else :
 		try :
 			f=open(datahandler[0],"r+")
@@ -44,7 +48,7 @@ while True:
 				data_send="HTTP/1.1 200 OK \r\n\r\n%s"%datasimpan+ambil_data
 				client_con.sendall(data_send)
 		except :
-	    		err="HTTP/1.1 404 Not Found\n\n <h1>NOT FOUND</h1>"
+	    		err="HTTP/1.1 404 Not Found\r\n\r\n <h1>NOT FOUND</h1>"
 			client_con.sendall(err)"""
 	try :
 		#print len(datarecognation)
@@ -56,7 +60,7 @@ while True:
 			client_con.sendall(data_send)
 		
 	except :
-    		err="HTTP/1.1 404 Not Found\n\n <h1>404<br>NOT FOUND</h1>"
+    		err="HTTP/1.1 404 Not Found\r\n\r\n <h1>404<br>NOT FOUND</h1>"
                 client_con.sendall(err)
 	client_con.close()
 		
