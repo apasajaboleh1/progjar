@@ -1,6 +1,6 @@
 import socket,time,datetime,sys	
 server_addr=(host,port)='localhost',80
-queue_data=5;
+queue_data=1001;
 
 	
 sock=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -12,7 +12,7 @@ while True:
 	client_con,client_addr=sock.accept()
 	#test="<!DOCTYPE HTML><html><h1>sukses gan</h1></html>"
 	#data="HTTP/1.1 200 OK \n\n%s"%test
-	request = client_con.recv(1024)
+	request = client_con.recv(1024)	
 	request_data=request.split()
 	temp=request_data[1]
 	temp1=temp[1:]
@@ -23,7 +23,7 @@ while True:
 		datarecognation = datacapturing.split("&");
 	
 	
-	"""if temp=="/" :
+	if temp=="/" :
 		try :
 			f=open("index.html","r+")
 			index=f.read()
@@ -49,8 +49,8 @@ while True:
 				client_con.sendall(data_send)
 		except :
 	    		err="HTTP/1.1 404 Not Found\r\n\r\n <h1>NOT FOUND</h1>"
-			client_con.sendall(err)"""
-	try :
+			client_con.sendall(err)
+	"""try :
 		#print len(datarecognation)
 		f=open(datahandler[0]+".jpeg","r+")
 		ambil_data=f.read()
@@ -61,7 +61,7 @@ while True:
 		
 	except :
     		err="HTTP/1.1 404 Not Found\r\n\r\n <h1>404<br>NOT FOUND</h1>"
-                client_con.sendall(err)
+                client_con.sendall(err)"""
 	client_con.close()
 		
 
