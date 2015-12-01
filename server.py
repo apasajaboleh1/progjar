@@ -1,5 +1,5 @@
 import socket,time,datetime,sys	
-server_addr=(host,port)='localhost',80
+server_addr=(host,port)='',80
 queue_data=1001;
 
 	
